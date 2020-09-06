@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+</head>
+<body class="container">
+    <h1 >Explore</h1>
+    <ul >
+
+  {{#each people}}
+
+    <div class="card" style="margin-top:30px; margin-bottom:30px">
+      <h5 class="card-header">{{this.email}}</h5>
+      <div class="card-body">
+        
+      <p class="card-text">{{this.body}}</p>
+      <p id="likes{{this._id}}">{{this.totalLikes}}</p>
+      <button class="btn btn-primary" id="like{{this._id}}" style="display: {{this.displayLike}};">Like</button>
+      <button class="btn btn-primary" id="unlike{{this._id}}" style="display: {{this.displayUnlike}};">Unlike</button>
+      <button class="btn btn-secondary">Comment</button>
+
+      </div>
+    </div>
+
+    <script>
+      document.getElementById("like{{this._id}}").addEventListener("click", function() {
+        $.post("likepost",
+        { 
+          postId: '{{this._id}}'
+        },
+        function(data, status){
+          console.log(data);
+          $("#likes{{this._id}}").html("" + data.newLikes);
+          $("#like{{this._id}}").css('display', data.displayLike)
+          $("#unlike{{this._id}}").css('display', data.displayUnlike)          
+        });
+      }, false);
+      document.getElementById("unlike{{this._id}}").addEventListener("click", function() {
+        $.post("unlikepost",
+        { 
+          postId: '{{this._id}}'
+        },
+        function(data, status){
+          console.log(data);
+          $("#likes{{this._id}}").html("" + data.newLikes);
+          $("#like{{this._id}}").css('display', data.displayLike)
+          $("#unlike{{this._id}}").css('display', data.displayUnlike)  
+        });
+      }, false);
+    </script>
+
+  {{/each}}
+</ul>
+</body>
+</html>
