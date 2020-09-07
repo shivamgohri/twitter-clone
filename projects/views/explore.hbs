@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{title}}</title>
+        <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z" crossorigin="anonymous">
+        
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+
+</head>
+<body class="container" >
+
+    <nav class="navbar navbar-expand-lg navbar-light bg-dark fixed-top " id="navb">
+
+        <a class="navbar-brand text-white" href="./explore">Home</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+        <div class="container">
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav mr-auto">
+                     <li class="nav-item ">
+                        <a class="nav-link text-white" href="./profile" tabindex="-4">Profile</a>
+                    </li>
+                    <li class="nav-item " style="background-color: rgba(160, 116, 243, 0.596);">
+                        <a class="nav-link text-white"  href="./explore" tabindex="-1">Explore</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link text-white" href="./post" tabindex="-1">Post</a>
+                    </li>
+                
+                </ul>
+                <button onclick="window.location.href='/Logout'"  class="btn btn-outline-success my-2 my-sm-0" type="submit">Logout</button>
+
+                {{!-- <button onclick="window.location.href='/signup'"  class="btn btn-outline-success my-2 my-sm-0" type="submit" style="margin-left: 10px;">Sign Up</button> --}}
+
+
+            </div>
+        </div>
+
+    </nav>
+
+    <!-- !navbar -->
+
+   
+
+    <div class="container" >
+     
+    <br><br><br>
+  
+    {{#each people}}
+
+    <div class="card" style="margin-top:30px; margin-bottom:30px" id="post{{this._id}}">
+        
+      <h5 class="card-header bg-dark" style="color: white;"><span>{{this.email}}
+        <small class="form-text" style="color: lightgray;">{{this.timestamp}}</small>
+      </h5>
+      
+      <div class="card-body">
+        
+      <p class="card-text">{{this.body}}</p>
+      {{!-- <p id="likes{{this._id}}">{{this.totalLikes}}</p> --}}
+      <button class="btn btn-primary" id="like{{this._id}}" style="display: {{this.displayLike}};"><span id="likes{{this._id}}">{{this.totalLikes}}</span>  &#128077;</button>
+      <button class="btn btn-primary" id="unlike{{this._id}}" style="display: {{this.displayUnlike}};"><span id="likes{{this._id}}">{{this.totalLikes}}</span>  &#128078;</button>
+      <br><br>
+      
+      {{!-- <input type="text" id="comment{{this._id}}" placeholder="Add a comment!">
+      <button class="btn btn-secondary" id="postcomment{{this._id}}">Comment</button>
+      <br> --}}
+
+        <ul id="section{{this._id}}">
+
+        {{#each this.comments}}
+
+            <li>
+                <h7 style="color: rgb(43, 8, 241);">  {{this.email}} <b>:</b></h7>&emsp; 
+                {{this.body}}
+                <small class="form-text text-muted">{{this.timestamp}}</small>
+            </li>
+
+        {{/each}}
+
+        </ul>  
+
+    <div class="input-group-prepend">
+        <button class="btn btn-secondary" type="button" id="postcomment{{this._id}}">Comment</button>&emsp;  
+        <input type="text" class="form-control" placeholder="Add a comment" id="comment{{this._id}}" aria-describedby="button-addon1">
+    </div>        
+        
+
+      </div>
+    </div>
+
+    <script>
+
+
+      document.getElementById("postcomment{{this._id}}").addEventListener("click", function() {
+        $.post("addcomment",
+        { 
+          postId: '{{this._id}}',
+          body: $("#comment{{this._id}}").val()
+        },
+        function(data, status){
+          console.log(data);  
+          var text = `<li><h7 style="color: rgb(43, 8, 241);">${data.email}<b>:</b></h7>&emsp;${data.body}<small class='form-text text-muted'>${data.timestamp}</small></li>`
+          $("#section{{this._id}}").append(text)     
+        });
+      }, false);
+
+      document.getElementById("like{{this._id}}").addEventListener("click", function() {
+        $.post("likepost",
+        { 
+          postId: '{{this._id}}'
+        },
+        function(data, status){
+          console.log(data);
+          $("#likes{{this._id}}").html("" + data.newLikes);
+          $("#like{{this._id}}").css('display', data.displayLike)
+          $("#unlike{{this._id}}").css('display', data.displayUnlike)          
+        });
+      }, false);
+
+      document.getElementById("unlike{{this._id}}").addEventListener("click", function() {
+        $.post("unlikepost",
+        { 
+          postId: '{{this._id}}'
+        },
+        function(data, status){
+          console.log(data);
+          $("#likes{{this._id}}").html("" + data.newLikes);
+          $("#like{{this._id}}").css('display', data.displayLike)
+          $("#unlike{{this._id}}").css('display', data.displayUnlike)  
+        });
+      }, false);
+
+    </script>
+
+
+  {{/each}}
+{{!-- <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script> --}}
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+</body>
+</html>
